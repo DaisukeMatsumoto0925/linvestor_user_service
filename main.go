@@ -1,20 +1,29 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/api/option"
 )
 
 func main() {
 	engine := gin.Default()
+	firebaseAuth := setupFirebase()
+	engine.Use(func(c *gin.Context) {
+		c.Set("firebaseAuth", firebaseAuth)
+	})
 	userEngine := engine.Group("/user")
 	{
 		v1 := userEngine.Group("/v1")
 		{
 			v1.GET("/", public)
-			// v1.GET("/public", private)
 		}
 	}
 	log.Fatal(engine.Run(":8080"))
@@ -26,38 +35,19 @@ func public(c *gin.Context) {
 	})
 }
 
-// func private(c echo.Context) error {
-
-// 	ctx := c.Request().Context()
-// 	if ctx == nil {
-// 		ctx = context.Background()
-// 	}
-
-// 	opt := option.WithCredentialsFile("GOOGLE_APPLICATION_CREDENTIALS")
-// 	app, err := fire.NewApp(context.Background(), nil, opt)
-// 	if err != nil {
-// 		fmt.Printf("error: %v\n", err)
-// 		os.Exit(1)
-// 	}
-// 	auth, err := app.Auth(context.Background())
-// 	if err != nil {
-// 		fmt.Printf("error: %v\n", err)
-// 		os.Exit(1)
-// 	}
-
-// 	// クライアントから送られてきた JWT 取得
-// 	authHeader := c.Request().Header.Get("Authorization")
-// 	idToken := strings.Replace(authHeader, "Bearer ", "", 1)
-
-// 	// JWT の検証
-// 	token, err := auth.VerifyIDToken(context.Background(), idToken)
-// 	if err != nil {
-// 		u := fmt.Sprintf("error verifying ID token: %v\n", err)
-// 		return c.JSON(http.StatusBadRequest, u)
-// 	}
-// 	uid := token.Claims["user_id"]
-
-// 	u := fmt.Sprintf("public is success. uid is %s", uid)
-
-// 	return c.JSON(http.StatusOK, u)
-// }
+func setupFirebase() *auth.Client {
+	serviceAccountKeyFilePath, err := filepath.Abs(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+	if err != nil {
+		log.Print("Unable to load serviceAccountKeys.json file")
+	}
+	opt := option.WithCredentialsFile(serviceAccountKeyFilePath)
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		log.Print("Firebase load error")
+	}
+	auth, err := app.Auth(context.Background())
+	if err != nil {
+		log.Print("Firebase load error")
+	}
+	return auth
+}
