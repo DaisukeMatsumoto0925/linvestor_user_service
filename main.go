@@ -19,12 +19,11 @@ func main() {
 	engine.Use(func(c *gin.Context) {
 		c.Set("firebaseAuth", firebaseAuth)
 	})
-	userEngine := engine.Group("/user")
+	v1 := engine.Group("/v1")
 	{
-		v1 := userEngine.Group("/v1")
-		{
-			v1.GET("/", public)
-		}
+		v1.GET("/", public)
+		v1.POST("/users", create)
+		v1.GET("/user", show)
 	}
 	log.Fatal(engine.Run(":8080"))
 }
@@ -50,4 +49,44 @@ func setupFirebase() *auth.Client {
 		log.Print("Firebase load error")
 	}
 	return auth
+}
+
+func create(c *gin.Context) {
+	client := setupFirebase()
+	user := createUser(c, client)
+	c.JSON(http.StatusOK, user)
+}
+
+func show(c *gin.Context) {
+	client := setupFirebase()
+	email := "user@example.com"
+	user := getUserByEmail(c, client, email)
+	c.JSON(http.StatusOK, user)
+}
+
+func createUser(ctx *gin.Context, client *auth.Client) *auth.UserRecord {
+	params := (&auth.UserToCreate{}).
+		Email("user@example.com").
+		EmailVerified(false).
+		PhoneNumber("+15555550100").
+		Password("secretPassword").
+		DisplayName("John Doe").
+		PhotoURL("http://www.example.com/12345678/photo.png").
+		Disabled(false)
+	u, err := client.CreateUser(ctx, params)
+	if err != nil {
+		log.Fatalf("error creating user: %v\n", err)
+	}
+	log.Printf("Successfully created user: %#v\n", u.UserInfo)
+
+	return u
+}
+
+func getUserByEmail(ctx *gin.Context, client *auth.Client, email string) *auth.UserRecord {
+	u, err := client.GetUserByEmail(ctx, email)
+	if err != nil {
+		log.Fatalf("error getting user by email %s: %v\n", email, err)
+	}
+	log.Printf("Successfully fetched user data: %v\n", u)
+	return u
 }
