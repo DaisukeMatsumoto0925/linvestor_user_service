@@ -52,13 +52,13 @@ func setupFirebase() *auth.Client {
 }
 
 func create(c *gin.Context) {
-	client := setupFirebase()
+	client := c.MustGet("firebaseAuth").(*auth.Client)
 	user := createUser(c, client)
 	c.JSON(http.StatusOK, user)
 }
 
 func show(c *gin.Context) {
-	client := setupFirebase()
+	client := c.MustGet("firebaseAuth").(*auth.Client)
 	email := "user@example.com"
 	user := getUserByEmail(c, client, email)
 	c.JSON(http.StatusOK, user)
