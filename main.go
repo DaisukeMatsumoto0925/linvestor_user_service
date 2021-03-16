@@ -13,6 +13,12 @@ import (
 	"google.golang.org/api/option"
 )
 
+type User struct {
+	UserName string `json:"user_name,omitempty"`
+	Email    string `json:"email,omitempty"`
+	Password string `json:"password,omitempty"`
+}
+
 func main() {
 	engine := gin.Default()
 	firebaseAuth := setupFirebase()
@@ -52,8 +58,16 @@ func setupFirebase() *auth.Client {
 }
 
 func create(c *gin.Context) {
+	var userParams User
+	err := c.BindJSON(&userParams)
+	if err != nil {
+		c.String(http.StatusBadRequest, "Bad request")
+		return
+	}
+
 	client := c.MustGet("firebaseAuth").(*auth.Client)
-	user := createUser(c, client)
+
+	user := createUser(c, client, userParams)
 	c.JSON(http.StatusOK, user)
 }
 
@@ -64,15 +78,11 @@ func show(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func createUser(ctx *gin.Context, client *auth.Client) *auth.UserRecord {
+func createUser(ctx *gin.Context, client *auth.Client, userParams User) *auth.UserRecord {
 	params := (&auth.UserToCreate{}).
-		Email("user@example.com").
-		EmailVerified(false).
-		PhoneNumber("+15555550100").
-		Password("secretPassword").
-		DisplayName("John Doe").
-		PhotoURL("http://www.example.com/12345678/photo.png").
-		Disabled(false)
+		Email(userParams.Email).
+		Password(userParams.Password).
+		DisplayName(userParams.UserName)
 	u, err := client.CreateUser(ctx, params)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
