@@ -30,6 +30,7 @@ func main() {
 		v1.GET("/", public)
 		v1.POST("/users", create)
 		v1.GET("/user/:id", show)
+		v1.DELETE("/user/:id", delete)
 	}
 	log.Fatal(engine.Run(":8080"))
 }
@@ -78,6 +79,16 @@ func show(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func delete(c *gin.Context) {
+	client := c.MustGet("firebaseAuth").(*auth.Client)
+	id := c.Param("id")
+	err := deleteUser(c, client, id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, "ok")
+}
+
 func createUser(ctx *gin.Context, client *auth.Client, userParams User) *auth.UserRecord {
 	params := (&auth.UserToCreate{}).
 		Email(userParams.Email).
@@ -100,4 +111,13 @@ func getUser(ctx *gin.Context, client *auth.Client, uid string) *auth.UserRecord
 	log.Printf("Successfully fetched user data: %v\n", u)
 
 	return u
+}
+
+func deleteUser(ctx *gin.Context, client *auth.Client, uid string) error {
+	err := client.DeleteUser(ctx, uid)
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully deleted user: %s\n", uid)
+	return nil
 }
