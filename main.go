@@ -29,7 +29,7 @@ func main() {
 	{
 		v1.GET("/", public)
 		v1.POST("/users", create)
-		v1.GET("/user", show)
+		v1.GET("/user/:id", show)
 	}
 	log.Fatal(engine.Run(":8080"))
 }
@@ -73,8 +73,8 @@ func create(c *gin.Context) {
 
 func show(c *gin.Context) {
 	client := c.MustGet("firebaseAuth").(*auth.Client)
-	email := "user@example.com"
-	user := getUserByEmail(c, client, email)
+	id := c.Param("id")
+	user := getUser(c, client, id)
 	c.JSON(http.StatusOK, user)
 }
 
@@ -92,11 +92,12 @@ func createUser(ctx *gin.Context, client *auth.Client, userParams User) *auth.Us
 	return u
 }
 
-func getUserByEmail(ctx *gin.Context, client *auth.Client, email string) *auth.UserRecord {
-	u, err := client.GetUserByEmail(ctx, email)
+func getUser(ctx *gin.Context, client *auth.Client, uid string) *auth.UserRecord {
+	u, err := client.GetUser(ctx, uid)
 	if err != nil {
-		log.Fatalf("error getting user by email %s: %v\n", email, err)
+		log.Fatalf("error getting user %s: %v\n", uid, err)
 	}
 	log.Printf("Successfully fetched user data: %v\n", u)
+
 	return u
 }
