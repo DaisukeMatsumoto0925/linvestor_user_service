@@ -10,14 +10,9 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/xfpng345/linvestor_user_service/domain"
 	"google.golang.org/api/option"
 )
-
-type User struct {
-	UserName string `json:"user_name,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
-}
 
 func main() {
 	engine := gin.Default()
@@ -52,7 +47,7 @@ func setupFirebase() *auth.Client {
 }
 
 func create(c *gin.Context) {
-	var userParams User
+	var userParams domain.User
 	err := c.BindJSON(&userParams)
 	if err != nil {
 		c.String(http.StatusBadRequest, "Bad request")
@@ -82,7 +77,7 @@ func delete(c *gin.Context) {
 	c.JSON(http.StatusOK, "ok")
 }
 
-func createUser(ctx *gin.Context, client *auth.Client, userParams User) *auth.UserRecord {
+func createUser(ctx *gin.Context, client *auth.Client, userParams domain.User) *auth.UserRecord {
 	params := (&auth.UserToCreate{}).
 		Email(userParams.Email).
 		Password(userParams.Password).
