@@ -27,18 +27,11 @@ func main() {
 	})
 	v1 := engine.Group("/v1")
 	{
-		v1.GET("/", public)
 		v1.POST("/users", create)
 		v1.GET("/user/:id", show)
 		v1.DELETE("/user/:id", delete)
 	}
 	log.Fatal(engine.Run(":8080"))
-}
-
-func public(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"status": "ok",
-	})
 }
 
 func setupFirebase() *auth.Client {
