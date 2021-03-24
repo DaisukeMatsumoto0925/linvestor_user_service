@@ -13,6 +13,7 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Router is gin engine
 var Router *gin.Engine
 
 func init() {
