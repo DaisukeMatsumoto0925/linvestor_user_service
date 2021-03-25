@@ -10,6 +10,7 @@ import (
 	"firebase.google.com/go/auth"
 	gin "github.com/gin-gonic/gin"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
+	"github.com/xfpng345/linvestor_user_service/src/app/interfaces/database"
 	"google.golang.org/api/option"
 )
 
@@ -18,7 +19,7 @@ type SqlHandler struct {
 	Conn *auth.Client
 }
 
-func NewSqlHandler() *auth.Client {
+func NewSqlHandler() database.SqlHandler {
 	serviceAccountKeyFilePath, err := filepath.Abs(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 	if err != nil {
 		log.Print("Unable to load serviceAccountKeys.json file")
@@ -28,14 +29,17 @@ func NewSqlHandler() *auth.Client {
 	if err != nil {
 		log.Print("Firebase load error")
 	}
-	auth, err := app.Auth(context.Background())
+	conn, err := app.Auth(context.Background())
 	if err != nil {
 		log.Print("Firebase load error")
 	}
-	return auth
+
+	sqlHandler := new(SqlHandler)
+	sqlHandler.Conn = conn
+	return sqlHandler
 }
 
-func (handler *SqlHandler) CreateUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error) {
+func (handler *SqlHandler) PostUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error) {
 	params := (&auth.UserToCreate{}).
 		Email(u.Email).
 		Password(u.Password).
@@ -44,6 +48,5 @@ func (handler *SqlHandler) CreateUser(ctx *gin.Context, u domain.User) (user *au
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
-	log.Printf("Successfully created user: %#v\n", user.UserInfo)
 	return
 }

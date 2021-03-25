@@ -7,5 +7,5 @@ import (
 )
 
 type SqlHandler interface {
-	CreateUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error)
+	PostUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error)
 }

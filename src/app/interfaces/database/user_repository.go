@@ -14,7 +14,7 @@ type UserRepository struct {
 
 // Store is func save a user
 func (repo *UserRepository) Store(ctx *gin.Context, u domain.User) (*auth.UserRecord, error) {
-	user, err := repo.CreateUser(ctx, u)
+	user, err := repo.PostUser(ctx, u)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
