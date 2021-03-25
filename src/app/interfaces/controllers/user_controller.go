@@ -52,22 +52,3 @@ func (controller *UserController) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, "ok")
 }
-
-// func getUser(ctx *gin.Context, client *auth.Client, uid string) *auth.UserRecord {
-// 	u, err := client.GetUser(ctx, uid)
-// 	if err != nil {
-// 		log.Fatalf("error getting user %s: %v\n", uid, err)
-// 	}
-// 	log.Printf("Successfully fetched user data: %v\n", u)
-
-// 	return u
-// }
-
-// func deleteUser(ctx *gin.Context, client *auth.Client, uid string) error {
-// 	err := client.DeleteUser(ctx, uid)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	log.Printf("Successfully deleted user: %s\n", uid)
-// 	return nil
-// }
