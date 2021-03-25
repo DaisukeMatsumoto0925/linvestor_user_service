@@ -19,3 +19,11 @@ func (interactor *UserInteractor) UserByID(ctx *gin.Context, uid string) (user *
 	user, err = interactor.UserRepository.GetByID(ctx, uid)
 	return
 }
+
+func (interactor *UserInteractor) DeleteByID(ctx *gin.Context, uid string) (err error) {
+	err = interactor.UserRepository.DeleteUser(ctx, uid)
+	if err != nil {
+		return err
+	}
+	return nil
+}

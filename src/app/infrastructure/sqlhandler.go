@@ -58,3 +58,11 @@ func (handler *SqlHandler) GetUser(ctx *gin.Context, uid string) (user *auth.Use
 	}
 	return
 }
+
+func (handler *SqlHandler) DeleteUser(ctx *gin.Context, uid string) (err error) {
+	err = handler.Conn.DeleteUser(ctx, uid)
+	if err != nil {
+		log.Fatalf("error creating user: %v\n", err)
+	}
+	return
+}

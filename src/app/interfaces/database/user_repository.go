@@ -32,3 +32,12 @@ func (repo *UserRepository) GetByID(ctx *gin.Context, uid string) (user *auth.Us
 
 	return user, nil
 }
+
+func (repo *UserRepository) DeleteByID(ctx *gin.Context, uid string) (err error) {
+	err = repo.DeleteUser(ctx, uid)
+	if err != nil {
+		return err
+	}
+	log.Printf("Successfully deleted user: %s\n", uid)
+	return nil
+}

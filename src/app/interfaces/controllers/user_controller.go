@@ -43,16 +43,15 @@ func (controller *UserController) Show(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// // Delete func delete a user
-// func Delete(c *gin.Context) {
-// 	client := c.MustGet("firebaseAuth").(*auth.Client)
-// 	id := c.Param("id")
-// 	err := deleteUser(c, client, id)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 	}
-// 	c.JSON(http.StatusOK, "ok")
-// }
+// Delete func delete a user
+func (controller *UserController) Delete(c *gin.Context) {
+	id := c.Param("id")
+	err := controller.Interactor.DeleteByID(c, id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, "ok")
+}
 
 // func getUser(ctx *gin.Context, client *auth.Client, uid string) *auth.UserRecord {
 // 	u, err := client.GetUser(ctx, uid)

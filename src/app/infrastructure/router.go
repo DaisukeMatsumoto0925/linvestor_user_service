@@ -17,7 +17,7 @@ func init() {
 	{
 		v1.POST("/users", userController.Create)
 		v1.GET("/user/:id", userController.Show)
-		// v1.DELETE("/user/:id", controllers.Delete)
+		v1.DELETE("/user/:id", userController.Delete)
 	}
 	log.Fatal(engine.Run(":8080"))
 }
