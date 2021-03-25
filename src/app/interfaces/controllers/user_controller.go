@@ -36,13 +36,12 @@ func (controller *UserController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// // Show func get a user
-// func Show(c *gin.Context) {
-// 	client := c.MustGet("firebaseAuth").(*auth.Client)
-// 	id := c.Param("id")
-// 	user := getUser(c, client, id)
-// 	c.JSON(http.StatusOK, user)
-// }
+// Show func get a user
+func (controller *UserController) Show(c *gin.Context) {
+	id := c.Param("id")
+	user, _ := controller.Interactor.UserByID(c, id)
+	c.JSON(http.StatusOK, user)
+}
 
 // // Delete func delete a user
 // func Delete(c *gin.Context) {

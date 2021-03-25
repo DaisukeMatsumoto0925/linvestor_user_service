@@ -8,4 +8,5 @@ import (
 
 type SqlHandler interface {
 	PostUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error)
+	GetUser(ctx *gin.Context, uid string) (user *auth.UserRecord, err error)
 }

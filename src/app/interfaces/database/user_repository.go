@@ -22,3 +22,13 @@ func (repo *UserRepository) Store(ctx *gin.Context, u domain.User) (*auth.UserRe
 
 	return user, nil
 }
+
+func (repo *UserRepository) GetByID(ctx *gin.Context, uid string) (user *auth.UserRecord, err error) {
+	user, err = repo.GetUser(ctx, uid)
+	if err != nil {
+		log.Fatalf("error getting user %s: %v\n", uid, err)
+	}
+	log.Printf("Successfully fetched user data: %v\n", user)
+
+	return user, nil
+}

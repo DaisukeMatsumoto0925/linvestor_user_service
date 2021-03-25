@@ -12,15 +12,11 @@ var Router *gin.Engine
 
 func init() {
 	engine := gin.Default()
-	// firebaseAuth := setupFirebase()
-	// engine.Use(func(c *gin.Context) {
-	// 	c.Set("firebaseAuth", firebaseAuth)
-	// })
 	v1 := engine.Group("/v1")
 	userController := controllers.NewUserController(NewSqlHandler())
 	{
 		v1.POST("/users", userController.Create)
-		// v1.GET("/user/:id", controllers.Show)
+		v1.GET("/user/:id", userController.Show)
 		// v1.DELETE("/user/:id", controllers.Delete)
 	}
 	log.Fatal(engine.Run(":8080"))

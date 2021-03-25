@@ -50,3 +50,11 @@ func (handler *SqlHandler) PostUser(ctx *gin.Context, u domain.User) (user *auth
 	}
 	return
 }
+
+func (handler *SqlHandler) GetUser(ctx *gin.Context, uid string) (user *auth.UserRecord, err error) {
+	user, err = handler.Conn.GetUser(ctx, uid)
+	if err != nil {
+		log.Fatalf("error creating user: %v\n", err)
+	}
+	return
+}
