@@ -66,3 +66,15 @@ func (handler *SqlHandler) DeleteUser(ctx *gin.Context, uid string) (err error) 
 	}
 	return
 }
+
+func (handler *SqlHandler) PutUser(ctx *gin.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
+	params := (&auth.UserToUpdate{}).
+		Email(u.Email).
+		Password(u.Password).
+		DisplayName(u.UserName)
+	user, err = handler.Conn.UpdateUser(ctx, uid, params)
+	if err != nil {
+		log.Fatalf("error creating user: %v\n", err)
+	}
+	return
+}

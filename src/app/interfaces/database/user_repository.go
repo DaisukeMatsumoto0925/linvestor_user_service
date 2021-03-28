@@ -41,3 +41,13 @@ func (repo *UserRepository) DeleteByID(ctx *gin.Context, uid string) (err error)
 	log.Printf("Successfully deleted user: %s\n", uid)
 	return nil
 }
+
+func (repo *UserRepository) UpdateUser(ctx *gin.Context, uid string, u domain.User) (*auth.UserRecord, error) {
+	user, err := repo.PutUser(ctx, uid, u)
+	if err != nil {
+		log.Fatalf("error creating user: %v\n", err)
+	}
+	log.Printf("Successfully created user: %#v\n", user.UserInfo)
+
+	return user, nil
+}

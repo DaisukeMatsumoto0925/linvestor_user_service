@@ -27,14 +27,14 @@ func NewUserController(sqlHandler database.SqlHandler) *UserController {
 
 // Create func post a user
 func (controller *UserController) Create(c *gin.Context) {
-	var userParams domain.User
-	err := c.BindJSON(&userParams)
+	var u domain.User
+	err := c.BindJSON(&u)
 	if err != nil {
 		c.String(http.StatusBadRequest, "Bad request")
 		return
 	}
 
-	user, _ := controller.Interactor.Add(c, userParams)
+	user, _ := controller.Interactor.Add(c, u)
 	c.JSON(http.StatusOK, user)
 }
 
@@ -53,4 +53,15 @@ func (controller *UserController) Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 	}
 	c.JSON(http.StatusOK, "ok")
+}
+
+// Update func update a user
+func (controller *UserController) Update(c *gin.Context) {
+	id := c.Param("id")
+	var u domain.User
+	user, err := controller.Interactor.UpdateByID(c, id, u)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, user)
 }
