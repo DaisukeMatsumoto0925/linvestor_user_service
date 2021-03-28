@@ -59,6 +59,7 @@ func (controller *UserController) Delete(c *gin.Context) {
 func (controller *UserController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var u domain.User
+	err := c.BindJSON(&u)
 	user, err := controller.Interactor.UpdateByID(c, id, u)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
