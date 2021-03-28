@@ -9,10 +9,12 @@ import (
 	"github.com/xfpng345/linvestor_user_service/src/app/usecase"
 )
 
+// UserController is struct of controller
 type UserController struct {
 	Interactor usecase.UserInteractor
 }
 
+// NewUserController si constructor
 func NewUserController(sqlHandler database.SqlHandler) *UserController {
 	return &UserController{
 		Interactor: usecase.UserInteractor{
