@@ -8,7 +8,6 @@ import (
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	gin "github.com/gin-gonic/gin"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 	"github.com/xfpng345/linvestor_user_service/src/app/interfaces/database"
 	"google.golang.org/api/option"
@@ -39,7 +38,7 @@ func NewSqlHandler() database.SqlHandler {
 	return sqlHandler
 }
 
-func (handler *SqlHandler) PostUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error) {
+func (handler *SqlHandler) PostUser(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
 	params := (&auth.UserToCreate{}).
 		Email(u.Email).
 		Password(u.Password).
@@ -51,7 +50,7 @@ func (handler *SqlHandler) PostUser(ctx *gin.Context, u domain.User) (user *auth
 	return
 }
 
-func (handler *SqlHandler) GetUser(ctx *gin.Context, uid string) (user *auth.UserRecord, err error) {
+func (handler *SqlHandler) GetUser(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
 	user, err = handler.Conn.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
@@ -59,7 +58,7 @@ func (handler *SqlHandler) GetUser(ctx *gin.Context, uid string) (user *auth.Use
 	return
 }
 
-func (handler *SqlHandler) DeleteUser(ctx *gin.Context, uid string) (err error) {
+func (handler *SqlHandler) DeleteUser(ctx context.Context, uid string) (err error) {
 	err = handler.Conn.DeleteUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
@@ -67,7 +66,7 @@ func (handler *SqlHandler) DeleteUser(ctx *gin.Context, uid string) (err error) 
 	return
 }
 
-func (handler *SqlHandler) PutUser(ctx *gin.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
+func (handler *SqlHandler) PutUser(ctx context.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
 	params := (&auth.UserToUpdate{}).
 		Email(u.Email).
 		Password(u.Password).

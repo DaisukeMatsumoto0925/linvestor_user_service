@@ -14,11 +14,11 @@ func init() {
 	engine := gin.Default()
 	v1 := engine.Group("/v1")
 	userController := controllers.NewUserController(NewSqlHandler())
-	{
-		v1.POST("/users", userController.Create)
-		v1.GET("/user/:id", userController.Show)
-		v1.DELETE("/user/:id", userController.Delete)
-		v1.PUT("/user/:id", userController.Update)
-	}
+
+	v1.POST("/users", func(c *gin.Context) { userController.Create(c) })
+	v1.GET("/user/:id", func(c *gin.Context) { userController.Show(c) })
+	v1.DELETE("/user/:id", func(c *gin.Context) { userController.Delete(c) })
+	v1.PUT("/user/:id", func(c *gin.Context) { userController.Update(c) })
+
 	log.Fatal(engine.Run(":8080"))
 }

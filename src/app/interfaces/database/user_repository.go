@@ -1,10 +1,10 @@
 package database
 
 import (
+	"context"
 	"log"
 
 	"firebase.google.com/go/auth"
-	"github.com/gin-gonic/gin"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 )
 
@@ -13,7 +13,7 @@ type UserRepository struct {
 }
 
 // Store is func save a user
-func (repo *UserRepository) Store(ctx *gin.Context, u domain.User) (*auth.UserRecord, error) {
+func (repo *UserRepository) Store(ctx context.Context, u domain.User) (*auth.UserRecord, error) {
 	user, err := repo.PostUser(ctx, u)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
@@ -23,7 +23,7 @@ func (repo *UserRepository) Store(ctx *gin.Context, u domain.User) (*auth.UserRe
 	return user, nil
 }
 
-func (repo *UserRepository) GetByID(ctx *gin.Context, uid string) (user *auth.UserRecord, err error) {
+func (repo *UserRepository) GetByID(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
 	user, err = repo.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error getting user %s: %v\n", uid, err)
@@ -33,7 +33,7 @@ func (repo *UserRepository) GetByID(ctx *gin.Context, uid string) (user *auth.Us
 	return user, nil
 }
 
-func (repo *UserRepository) DeleteByID(ctx *gin.Context, uid string) (err error) {
+func (repo *UserRepository) DeleteByID(ctx context.Context, uid string) (err error) {
 	err = repo.DeleteUser(ctx, uid)
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (repo *UserRepository) DeleteByID(ctx *gin.Context, uid string) (err error)
 	return nil
 }
 
-func (repo *UserRepository) UpdateUser(ctx *gin.Context, uid string, u domain.User) (*auth.UserRecord, error) {
+func (repo *UserRepository) UpdateUser(ctx context.Context, uid string, u domain.User) (*auth.UserRecord, error) {
 	user, err := repo.PutUser(ctx, uid, u)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)

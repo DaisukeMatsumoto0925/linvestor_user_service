@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 	"github.com/xfpng345/linvestor_user_service/src/app/interfaces/database"
 	"github.com/xfpng345/linvestor_user_service/src/app/usecase"
@@ -26,11 +25,11 @@ func NewUserController(sqlHandler database.SqlHandler) *UserController {
 }
 
 // Create func post a user
-func (controller *UserController) Create(c *gin.Context) {
+func (controller *UserController) Create(c Context) {
 	var u domain.User
 	err := c.BindJSON(&u)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Bad request")
+		c.JSON(http.StatusBadRequest, "Bad request")
 		return
 	}
 
@@ -39,14 +38,14 @@ func (controller *UserController) Create(c *gin.Context) {
 }
 
 // Show func get a user
-func (controller *UserController) Show(c *gin.Context) {
+func (controller *UserController) Show(c Context) {
 	id := c.Param("id")
 	user, _ := controller.Interactor.UserByID(c, id)
 	c.JSON(http.StatusOK, user)
 }
 
 // Delete func delete a user
-func (controller *UserController) Delete(c *gin.Context) {
+func (controller *UserController) Delete(c Context) {
 	id := c.Param("id")
 	err := controller.Interactor.DeleteByID(c, id)
 	if err != nil {
@@ -56,7 +55,7 @@ func (controller *UserController) Delete(c *gin.Context) {
 }
 
 // Update func update a user
-func (controller *UserController) Update(c *gin.Context) {
+func (controller *UserController) Update(c Context) {
 	id := c.Param("id")
 	var u domain.User
 	err := c.BindJSON(&u)
