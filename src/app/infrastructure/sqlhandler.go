@@ -59,7 +59,7 @@ func (handler *SQLHandler) PostUser(ctx context.Context, u domain.User) (user do
 func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user domain.User, err error) {
 	fireUser, err := handler.Conn.GetUser(ctx, uid)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
 	user.ID = fireUser.UID
 	user.UserName = fireUser.DisplayName
@@ -71,7 +71,7 @@ func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user domain
 func (handler *SQLHandler) DeleteUser(ctx context.Context, uid string) (err error) {
 	err = handler.Conn.DeleteUser(ctx, uid)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
 	return
 }
@@ -84,7 +84,7 @@ func (handler *SQLHandler) PutUser(ctx context.Context, uid string, u domain.Use
 		DisplayName(u.UserName)
 	fireUser, err := handler.Conn.UpdateUser(ctx, uid, params)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
 	user.ID = fireUser.UID
 	user.UserName = fireUser.DisplayName
