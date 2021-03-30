@@ -14,11 +14,11 @@ type UserController struct {
 }
 
 // NewUserController si constructor
-func NewUserController(sqlHandler database.SqlHandler) *UserController {
+func NewUserController(SQLHandler database.SQLHandler) *UserController {
 	return &UserController{
 		Interactor: usecase.UserInteractor{
 			UserRepository: &database.UserRepository{
-				SqlHandler: sqlHandler,
+				SQLHandler: SQLHandler,
 			},
 		},
 	}

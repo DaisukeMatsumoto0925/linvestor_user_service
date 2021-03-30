@@ -13,7 +13,7 @@ var Router *gin.Engine
 func init() {
 	engine := gin.Default()
 	v1 := engine.Group("/v1")
-	userController := controllers.NewUserController(NewSqlHandler())
+	userController := controllers.NewUserController(NewSQLHandler())
 
 	v1.POST("/users", func(c *gin.Context) { userController.Create(c) })
 	v1.GET("/user/:id", func(c *gin.Context) { userController.Show(c) })

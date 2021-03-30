@@ -13,12 +13,12 @@ import (
 	"google.golang.org/api/option"
 )
 
-// SqlHandler is a handler
-type SqlHandler struct {
+// SQLHandler is a handler
+type SQLHandler struct {
 	Conn *auth.Client
 }
 
-func NewSqlHandler() database.SqlHandler {
+func NewSQLHandler() database.SQLHandler {
 	serviceAccountKeyFilePath, err := filepath.Abs(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 	if err != nil {
 		log.Print("Unable to load serviceAccountKeys.json file")
@@ -33,12 +33,12 @@ func NewSqlHandler() database.SqlHandler {
 		log.Print("Firebase load error")
 	}
 
-	sqlHandler := new(SqlHandler)
-	sqlHandler.Conn = conn
-	return sqlHandler
+	SQLHandler := new(SQLHandler)
+	SQLHandler.Conn = conn
+	return SQLHandler
 }
 
-func (handler *SqlHandler) PostUser(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
+func (handler *SQLHandler) PostUser(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
 	params := (&auth.UserToCreate{}).
 		Email(u.Email).
 		Password(u.Password).
@@ -50,7 +50,7 @@ func (handler *SqlHandler) PostUser(ctx context.Context, u domain.User) (user *a
 	return
 }
 
-func (handler *SqlHandler) GetUser(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
+func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
 	user, err = handler.Conn.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
@@ -58,7 +58,7 @@ func (handler *SqlHandler) GetUser(ctx context.Context, uid string) (user *auth.
 	return
 }
 
-func (handler *SqlHandler) DeleteUser(ctx context.Context, uid string) (err error) {
+func (handler *SQLHandler) DeleteUser(ctx context.Context, uid string) (err error) {
 	err = handler.Conn.DeleteUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
@@ -66,7 +66,7 @@ func (handler *SqlHandler) DeleteUser(ctx context.Context, uid string) (err erro
 	return
 }
 
-func (handler *SqlHandler) PutUser(ctx context.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
+func (handler *SQLHandler) PutUser(ctx context.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
 	params := (&auth.UserToUpdate{}).
 		Email(u.Email).
 		Password(u.Password).

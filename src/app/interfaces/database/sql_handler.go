@@ -7,7 +7,8 @@ import (
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 )
 
-type SqlHandler interface {
+// SQLHandler is a interface of handler
+type SQLHandler interface {
 	PostUser(ctx context.Context, u domain.User) (user *auth.UserRecord, err error)
 	GetUser(ctx context.Context, uid string) (user *auth.UserRecord, err error)
 	DeleteUser(ctx context.Context, uid string) error
