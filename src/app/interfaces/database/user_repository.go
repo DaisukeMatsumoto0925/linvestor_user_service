@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"firebase.google.com/go/auth"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 )
 
@@ -14,18 +13,18 @@ type UserRepository struct {
 }
 
 // Store is func save a user
-func (repo *UserRepository) CreateUser(ctx context.Context, u domain.User) (*auth.UserRecord, error) {
+func (repo *UserRepository) CreateUser(ctx context.Context, u domain.User) (domain.User, error) {
 	user, err := repo.PostUser(ctx, u)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
-	log.Printf("Successfully created user: %#v\n", user.UserInfo)
+	log.Printf("Successfully created user: %#v\n", user)
 
 	return user, nil
 }
 
 // GetByID is func get a user
-func (repo *UserRepository) GetByID(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
+func (repo *UserRepository) GetByID(ctx context.Context, uid string) (user domain.User, err error) {
 	user, err = repo.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error getting user %s: %v\n", uid, err)
@@ -46,12 +45,12 @@ func (repo *UserRepository) DeleteByID(ctx context.Context, uid string) (err err
 }
 
 // UpdateUser is func update a user
-func (repo *UserRepository) UpdateUser(ctx context.Context, uid string, u domain.User) (*auth.UserRecord, error) {
+func (repo *UserRepository) UpdateUser(ctx context.Context, uid string, u domain.User) (domain.User, error) {
 	user, err := repo.PutUser(ctx, uid, u)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
-	log.Printf("Successfully created user: %#v\n", user.UserInfo)
+	log.Printf("Successfully created user: %#v\n", user)
 
 	return user, nil
 }

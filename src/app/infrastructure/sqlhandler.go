@@ -18,6 +18,7 @@ type SQLHandler struct {
 	Conn *auth.Client
 }
 
+// NewSQLHandler is func init a DB handler
 func NewSQLHandler() database.SQLHandler {
 	serviceAccountKeyFilePath, err := filepath.Abs(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 	if err != nil {
@@ -38,26 +39,35 @@ func NewSQLHandler() database.SQLHandler {
 	return SQLHandler
 }
 
-func (handler *SQLHandler) PostUser(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
+// PostUser is func post a user
+func (handler *SQLHandler) PostUser(ctx context.Context, u domain.User) (user domain.User, err error) {
 	params := (&auth.UserToCreate{}).
 		Email(u.Email).
 		Password(u.Password).
 		DisplayName(u.UserName)
-	user, err = handler.Conn.CreateUser(ctx, params)
+	fireUser, err := handler.Conn.CreateUser(ctx, params)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
 
-func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user *auth.UserRecord, err error) {
-	user, err = handler.Conn.GetUser(ctx, uid)
+// GetUser is func get a user by id param
+func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user domain.User, err error) {
+	fireUser, err := handler.Conn.GetUser(ctx, uid)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
 
+// DeleteUser is func delete a user by id param
 func (handler *SQLHandler) DeleteUser(ctx context.Context, uid string) (err error) {
 	err = handler.Conn.DeleteUser(ctx, uid)
 	if err != nil {
@@ -66,14 +76,18 @@ func (handler *SQLHandler) DeleteUser(ctx context.Context, uid string) (err erro
 	return
 }
 
-func (handler *SQLHandler) PutUser(ctx context.Context, uid string, u domain.User) (user *auth.UserRecord, err error) {
+// PutUser is func put a user by id follow body
+func (handler *SQLHandler) PutUser(ctx context.Context, uid string, u domain.User) (user domain.User, err error) {
 	params := (&auth.UserToUpdate{}).
 		Email(u.Email).
 		Password(u.Password).
 		DisplayName(u.UserName)
-	user, err = handler.Conn.UpdateUser(ctx, uid, params)
+	fireUser, err := handler.Conn.UpdateUser(ctx, uid, params)
 	if err != nil {
 		log.Fatalf("error creating user: %v\n", err)
 	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
