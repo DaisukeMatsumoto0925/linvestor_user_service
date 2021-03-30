@@ -33,14 +33,20 @@ func (controller *UserController) Create(c Context) {
 		return
 	}
 
-	user, _ := controller.Interactor.UserCreate(c, u)
+	user, err := controller.Interactor.UserCreate(c, u)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
 	c.JSON(http.StatusOK, user)
 }
 
 // Show func get a user
 func (controller *UserController) Show(c Context) {
 	id := c.Param("id")
-	user, _ := controller.Interactor.UserByID(c, id)
+	user, err := controller.Interactor.UserByID(c, id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
 	c.JSON(http.StatusOK, user)
 }
 
