@@ -11,8 +11,8 @@ type UserInteractor struct {
 	UserRepository UserRepository
 }
 
-func (interactor *UserInteractor) Add(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
-	user, err = interactor.UserRepository.Store(ctx, u)
+func (interactor *UserInteractor) UserCreate(ctx context.Context, u domain.User) (user *auth.UserRecord, err error) {
+	user, err = interactor.UserRepository.CreateUser(ctx, u)
 	if err != nil {
 		return
 	}

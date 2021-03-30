@@ -33,7 +33,7 @@ func (controller *UserController) Create(c Context) {
 		return
 	}
 
-	user, _ := controller.Interactor.Add(c, u)
+	user, _ := controller.Interactor.UserCreate(c, u)
 	c.JSON(http.StatusOK, user)
 }
 
