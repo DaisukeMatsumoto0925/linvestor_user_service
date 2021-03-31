@@ -13,7 +13,7 @@ type UserController struct {
 	Interactor usecase.UserInteractor
 }
 
-// NewUserController si constructor
+// NewUserController is constructor
 func NewUserController(SQLHandler database.SQLHandler) *UserController {
 	return &UserController{
 		Interactor: usecase.UserInteractor{
