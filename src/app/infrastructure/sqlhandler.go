@@ -8,18 +8,18 @@ import (
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	gin "github.com/gin-gonic/gin"
 	"github.com/xfpng345/linvestor_user_service/src/app/domain"
 	"github.com/xfpng345/linvestor_user_service/src/app/interfaces/database"
 	"google.golang.org/api/option"
 )
 
-// SqlHandler is a handler
-type SqlHandler struct {
+// SQLHandler is a handler
+type SQLHandler struct {
 	Conn *auth.Client
 }
 
-func NewSqlHandler() database.SqlHandler {
+// NewSQLHandler is func init a DB handler
+func NewSQLHandler() database.SQLHandler {
 	serviceAccountKeyFilePath, err := filepath.Abs(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 	if err != nil {
 		log.Print("Unable to load serviceAccountKeys.json file")
@@ -34,35 +34,60 @@ func NewSqlHandler() database.SqlHandler {
 		log.Print("Firebase load error")
 	}
 
-	sqlHandler := new(SqlHandler)
-	sqlHandler.Conn = conn
-	return sqlHandler
+	SQLHandler := new(SQLHandler)
+	SQLHandler.Conn = conn
+	return SQLHandler
 }
 
-func (handler *SqlHandler) PostUser(ctx *gin.Context, u domain.User) (user *auth.UserRecord, err error) {
+// PostUser is func post a user
+func (handler *SQLHandler) PostUser(ctx context.Context, u domain.User) (user domain.User, err error) {
 	params := (&auth.UserToCreate{}).
 		Email(u.Email).
 		Password(u.Password).
 		DisplayName(u.UserName)
-	user, err = handler.Conn.CreateUser(ctx, params)
+	fireUser, err := handler.Conn.CreateUser(ctx, params)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
 
-func (handler *SqlHandler) GetUser(ctx *gin.Context, uid string) (user *auth.UserRecord, err error) {
-	user, err = handler.Conn.GetUser(ctx, uid)
+// GetUser is func get a user by id param
+func (handler *SQLHandler) GetUser(ctx context.Context, uid string) (user domain.User, err error) {
+	fireUser, err := handler.Conn.GetUser(ctx, uid)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
 
-func (handler *SqlHandler) DeleteUser(ctx *gin.Context, uid string) (err error) {
+// DeleteUser is func delete a user by id param
+func (handler *SQLHandler) DeleteUser(ctx context.Context, uid string) (err error) {
 	err = handler.Conn.DeleteUser(ctx, uid)
 	if err != nil {
-		log.Fatalf("error creating user: %v\n", err)
+		return
 	}
+	return
+}
+
+// PutUser is func put a user by id follow body
+func (handler *SQLHandler) PutUser(ctx context.Context, uid string, u domain.User) (user domain.User, err error) {
+	params := (&auth.UserToUpdate{}).
+		Email(u.Email).
+		Password(u.Password).
+		DisplayName(u.UserName)
+	fireUser, err := handler.Conn.UpdateUser(ctx, uid, params)
+	if err != nil {
+		return
+	}
+	user.ID = fireUser.UID
+	user.UserName = fireUser.DisplayName
+	user.Email = fireUser.Email
 	return
 }
